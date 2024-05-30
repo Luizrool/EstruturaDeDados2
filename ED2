@@ -1,0 +1,1299 @@
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+// Define a estrutura de um nó na arvore binaria
+
+struct No_Arv {
+
+  int dado;
+  struct No_Arv *esquerda;
+  struct No_Arv *direita;
+};
+
+struct Pilha {
+  struct No_Arv *no;
+  struct Pilha *prox;
+};
+
+// Função para criar um novo nó
+
+struct No_Arv *novoNo1(int dado) {
+  struct No_Arv *novoNo = (struct No_Arv *)malloc(sizeof(struct No_Arv));
+  if (novoNo == NULL) {
+
+    printf("Falha em alocar novo nó \n");
+
+    // EXIT_FAILURE
+    exit(1);
+  }
+
+  novoNo->dado = dado;
+  novoNo->esquerda = NULL;
+  novoNo->direita = NULL;
+  return novoNo;
+}
+
+struct No_Arv *inserir(struct No_Arv *raiz, int dado) {
+  if (raiz == NULL)
+
+  {
+
+    raiz = novoNo1(dado);
+
+  }
+
+  else
+
+  {
+    if (dado <= raiz->dado)
+
+    {
+
+      raiz->esquerda = inserir(raiz->esquerda, dado);
+
+    }
+
+    else
+
+    {
+
+      raiz->direita = inserir(raiz->direita, dado);
+    }
+  }
+  return raiz;
+}
+
+void imprimeNo(int c, int d) {
+  int i;
+  for (i = 0; i < d; i++)
+    printf("   ");
+  printf("%i\n", c);
+}
+
+void percorrerEmOrdem(struct No_Arv *raiz) {
+  if (raiz != NULL) {
+    percorrerEmOrdem(raiz->esquerda);
+    printf("%d ", raiz->dado);
+    percorrerEmOrdem(raiz->direita);
+  }
+}
+void percorrerPreOrdem(struct No_Arv *raiz) {
+  if (raiz != NULL) {
+    printf("%d ", raiz->dado);
+    percorrerEmOrdem(raiz->esquerda);
+    percorrerEmOrdem(raiz->direita);
+  }
+}
+void percorrerPosOrdem(struct No_Arv *raiz) {
+
+  if (raiz != NULL)
+
+  {
+
+    percorrerEmOrdem(raiz->esquerda);
+    percorrerEmOrdem(raiz->direita);
+    printf("%d ", raiz->dado);
+  }
+}
+
+void mostraArvore(struct No_Arv *a, int b) {
+
+  if (a == NULL) {
+
+    return;
+  }
+
+  mostraArvore(a->direita, b + 1);
+  imprimeNo(a->dado, b);
+  mostraArvore(a->esquerda, b + 1);
+}
+// 2. Escreva uma funcao que conta o numero de nos de uma arvore binaria.
+int contador_nos(struct No_Arv *raiz) {
+
+  if (raiz == NULL) {
+
+    return 0;
+
+    int conta_esq = contador_nos(raiz->esquerda);
+    int conta_dir = contador_nos(raiz->direita);
+    return 1 + conta_esq + conta_dir;
+  }
+}
+// 3. Escreva uma func¸ao que conta o numero de nos nao-folha de uma  arvore
+// binaria.
+int contador_nao_folha(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 0;
+  }
+
+  else {
+
+    if (raiz->esquerda != NULL || raiz->direita != NULL) {
+
+      int conta = contador_nao_folha(raiz->esquerda);
+      int contad = contador_nao_folha(raiz->direita);
+      return 1 + conta + contad;
+    }
+  }
+
+  return 0;
+}
+// 4. Escreva uma funcao que conta o numero de folhas de uma  arvore binaria.
+int contador_nos_folha(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 0;
+  } else if (raiz->esquerda == NULL && raiz->direita == NULL) {
+    return 1;
+  } else {
+    int conta_esq = contador_nos_folha(raiz->esquerda);
+    int conta_dir = contador_nos_folha(raiz->direita);
+    return conta_esq + conta_dir;
+  }
+}
+// 5. Escreva uma funcao que calcula a altura de uma  arvore binaria.
+int altura_arvore(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 0;
+  }
+
+  int esq_altura = altura_arvore(raiz->esquerda);
+  int dir_altura = altura_arvore(raiz->direita);
+
+  return 1 + (esq_altura > dir_altura ? esq_altura : dir_altura);
+}
+// 6. Escreva uma func¸ao para buscar um numero impar em uma ´ arvore binaria
+// NAO ordenada
+void buscaNumeroImpar(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return;
+  }
+  if (raiz->dado % 2 != 0) {
+    printf("Numero: %d\n", raiz->dado);
+  }
+  buscaNumeroImpar(raiz->esquerda);
+  buscaNumeroImpar(raiz->direita);
+}
+
+// 7. Escreva uma funcao para achar o MAIOR numero em uma  arvore binaria NAO
+// ordenada.
+
+int encontraMaiorNumero(struct No_Arv *raiz) {
+
+  if (raiz != NULL) {
+
+    int maior = raiz->dado;
+    int maiorDireita = encontraMaiorNumero(raiz->direita);
+    if (maiorDireita > maior) {
+
+      maior = maiorDireita;
+    }
+
+    int maiorEsquerda = encontraMaiorNumero(raiz->esquerda);
+    if (maiorEsquerda > maior) {
+
+      maior = maiorEsquerda;
+    }
+
+    return maior;
+  } else {
+
+    return -1;
+  }
+}
+// 8. Escreva uma funcao que exclui todos os nos de uma  arvore binaria NAO
+// ordenada com ID par.
+int exclPares(struct No_Arv **raiz) {
+
+  if (*raiz == NULL) {
+
+    return 0;
+  }
+  if ((*raiz)->dado % 2 == 0) {
+
+    struct No_Arv *temp = *raiz;
+    *raiz = NULL;
+    free(temp);
+    return 1;
+  } else {
+
+    int exclEsquerda = exclPares(&(*raiz)->esquerda);
+    int exclDireita = exclPares(&(*raiz)->direita);
+    return exclEsquerda || exclDireita;
+  }
+}
+// 9. Escreva uma funcao que exclui todos os nos de uma  arvore binaria de
+// busca com ID par.
+
+int exclParesOrd(struct No_Arv **raiz) {
+  if (*raiz == NULL) {
+
+    return 0;
+  }
+  if ((*raiz)->dado % 2 == 0) {
+
+    struct No_Arv *temp = *raiz;
+    if ((*raiz)->esquerda == NULL) {
+
+      *raiz = (*raiz)->direita;
+      printf("Teste");
+    } else if ((*raiz)->direita == NULL) {
+      *raiz = (*raiz)->esquerda;
+
+    } else {
+
+      struct No_Arv *maisDir = (*raiz)->esquerda;
+      while (maisDir->direita != NULL) {
+
+        maisDir = maisDir->direita;
+      }
+      maisDir->direita = (*raiz)->direita;
+      *raiz = (*raiz)->esquerda;
+    }
+    free(temp);
+    exclParesOrd(raiz);
+    return 1;
+
+  } else {
+
+    int exclEsq = exclParesOrd(&(*raiz)->esquerda);
+    int exclDir = exclParesOrd(&(*raiz)->direita);
+    return exclEsq || exclDir;
+  }
+}
+
+// 10. Escreva uma funcao que retorna verdadeiro se uma arvore e binaria de
+// busca e  falso caso contrario
+
+int verificaBusca(struct No_Arv *raiz) {
+
+  if (raiz == NULL) {
+
+    return 1;
+  }
+
+  if (raiz->esquerda != NULL && raiz->dado <= raiz->esquerda->dado ||
+      raiz->direita != NULL && raiz->dado >= raiz->direita->dado) {
+
+    return 0;
+  }
+
+  return verificaBusca(raiz->esquerda) && verificaBusca(raiz->direita);
+}
+
+// 11. Escreva uma funcao que encontra o valor maximo em uma  arvore de busca
+// binaria.
+
+struct NoArvore *encontrarMaximo(struct No_Arv *raiz) {
+
+  struct No_Arv *atual = raiz;
+  while (atual->direita != NULL) {
+
+    atual = atual->direita;
+  }
+
+  return atual;
+}
+// 12. Escreva uma funcao que obtem o espelho de uma  arvore, ou seja, troca a
+// sub arvore direita pela subarvore esquerda de todos os nos da arvore
+int espelhoArvore(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 0;
+  }
+
+  struct No_Arv *temp = raiz->esquerda;
+  raiz->esquerda = raiz->direita;
+  raiz->direita = temp;
+
+  espelhoArvore(raiz->esquerda);
+  espelhoArvore(raiz->direita);
+  return 1;
+}
+/* 13. Duas ABBs sao SIMILARES se possuem a mesma distribuic¸ ˜ ao de n ˜ os
+(independente ´ dos valores nos mesmos). Em uma definic¸ao mais formal, duas
+ABBs s ˜ ao SIMILARES ˜ se sao ambas vazia, ou se suas sub ˜ arvores esquerdas
+s ´ ao similares, e suas sub ˜ arvores ´ direitas tambem s ´ ao similares.
+Implemente a func¸ ˜ ao que verifica se duas ˜ arvores s ´ ao˜ similares.*/
+
+int similaridade(struct No_Arv *raiz, struct No_Arv *raiz2) {
+  if (raiz == NULL && raiz2 == NULL) {
+    return 1;
+  }
+  if (raiz == NULL || raiz2 == NULL) {
+    return 0;
+  }
+  return similaridade(raiz->esquerda, raiz2->esquerda) &&
+         similaridade(raiz->direita, raiz2->direita);
+}
+/* 14. Duas ABBs sao IGUAIS se s ˜ ao ambas vazias ou ent ˜ ao se armazenam
+valores iguais ˜ em suas raizes, suas subarvores esquerdas s ´ ao iguais, e
+suas sub ˜ arvores direitas s ´ ao˜ iguais. Implemente a func¸ao que verifica
+se duas ˜ arvores s ´ ao simlares. */
+int Iguais(struct No_Arv *raiz1, struct No_Arv *raiz2) {
+  if (raiz1 == NULL && raiz2 == NULL) {
+    return 1;
+  }
+  if (raiz1 == NULL || raiz2 == NULL) {
+    return 0;
+  }
+  return (raiz1->dado == raiz2->dado) &&
+         Iguais(raiz1->esquerda, raiz2->esquerda) &&
+         Iguais(raiz1->direita, raiz2->direita);
+}
+/*15. Uma ABB e estritamente binaria se todos os nos da  arvore tem 2 filhos.
+Implemente uma funcao que verifica se uma ABB ˜ e estritamente binaria. */
+int eEstritamenteBinaria(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 1;
+  }
+  if (raiz->esquerda == NULL && raiz->direita == NULL ||
+      raiz->esquerda != NULL && raiz->direita != NULL) {
+    return eEstritamenteBinaria(raiz->esquerda) &&
+           eEstritamenteBinaria(raiz->direita);
+  }
+  return 0;
+}
+// 16. Implemente uma func¸ao para testar se uma arvore binariae uma ABB.
+int verificaABB(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 1;
+  }
+  if (raiz->esquerda != NULL && raiz->dado <= raiz->esquerda->dado) {
+    return 0;
+  }
+  if (raiz->direita != NULL && raiz->dado >= raiz->direita->dado) {
+    return 0;
+  }
+
+  int verificaEsquerda = verificaABB(raiz->esquerda);
+  int verificaDireita = verificaABB(raiz->direita);
+  return verificaEsquerda && verificaDireita;
+}
+// 17. Pense na implementacao nao recursiva dos algoritmos de insercao, remocao
+// e busca em uma ABB.
+
+struct No_Arv *inserirIterativo(struct No_Arv *raiz, int dado) {
+  struct No_Arv *novoNo = novoNo1(dado);
+  if (raiz == NULL) {
+    return novoNo;
+  }
+  struct No_Arv *atual = raiz;
+  struct No_Arv *pai = NULL;
+
+  while (atual != NULL) {
+    pai = atual;
+    if (dado < atual->dado) {
+      atual = atual->esquerda;
+    } else {
+      atual = atual->direita;
+    }
+  }
+  if (dado < pai->dado) {
+    pai->esquerda = novoNo;
+  } else {
+    pai->direita = novoNo;
+  }
+  return raiz;
+}
+struct No_Arv *buscarIterativo(struct No_Arv *raiz, int dado) {
+  struct No_Arv *atual = raiz;
+  while (atual != NULL) {
+    if (dado == atual->dado) {
+      return atual;
+    } else if (dado < atual->dado) {
+      atual = atual->esquerda;
+    } else {
+      atual = atual->direita;
+    }
+  }
+  return NULL;
+}
+struct No_Arv *removerIterativo(struct No_Arv *raiz, int dado) {
+  struct No_Arv *atual = raiz;
+  struct No_Arv *pai = NULL;
+
+  while (atual != NULL && atual->dado != dado) {
+
+    pai = atual;
+    if (dado < atual->dado) {
+
+      atual = atual->esquerda;
+    } else {
+
+      atual = atual->direita;
+    }
+  }
+  if (atual == NULL) {
+
+    return raiz;
+  }
+  if (atual->esquerda == NULL || atual->direita == NULL) {
+
+    struct No_Arv *novoFilho =
+        atual->esquerda ? atual->esquerda : atual->direita;
+
+    if (pai == NULL) {
+
+      free(atual);
+      return novoFilho;
+    }
+    if (atual == pai->esquerda) {
+
+      pai->esquerda = novoFilho;
+    } else {
+
+      pai->direita = novoFilho;
+    }
+  } else {
+
+    struct No_Arv *sucessorPai = atual;
+    struct No_Arv *sucessor = atual->direita;
+    while (sucessor->esquerda != NULL) {
+
+      sucessorPai = sucessor;
+      sucessor = sucessor->esquerda;
+    }
+    if (sucessorPai != atual) {
+
+      sucessorPai->esquerda = sucessor->direita;
+    } else {
+
+      sucessorPai->direita = sucessor->direita;
+    }
+    atual->dado = sucessor->dado;
+    free(sucessor);
+  }
+  free(atual);
+  return raiz;
+}
+
+// 24. Escreva funções não recursivas para realizar os 3 tipos de percurso na
+// árvore binária (dica: use uma pilha): a) pré-ordem
+int pilhaVazia(struct Pilha *topo) { return topo == NULL; }
+void empilhar(struct Pilha **topo, struct No_Arv *no) {
+  struct Pilha *novo = (struct Pilha *)malloc(sizeof(struct Pilha));
+  novo->no = no;
+  novo->prox = *topo;
+  *topo = novo;
+}
+struct No_Arv *desempilhar(struct Pilha **topo) {
+  if (*topo == NULL) {
+    return NULL;
+  }
+  struct No_Arv *no = (*topo)->no;
+  struct Pilha *temp = *topo;
+  *topo = (*topo)->prox;
+  free(temp);
+  return no;
+}
+void percorrerEm_OrdemIterativo(struct No_Arv *raiz) {
+  struct Pilha *pilha = NULL;
+  struct No_Arv *atual = raiz;
+
+  while (!pilhaVazia(pilha) || atual != NULL) {
+    while (atual != NULL) {
+      empilhar(&pilha, atual);
+      atual = atual->esquerda;
+    }
+    atual = desempilhar(&pilha);
+    printf("%d ", atual->dado);
+    atual = atual->direita;
+  }
+  printf("\n");
+}
+void percorrerPre_OrdemIterativo(struct No_Arv *raiz) {
+  if (raiz == NULL)
+    return;
+
+  struct Pilha *pilha = NULL;
+  empilhar(&pilha, raiz);
+
+  while (!pilhaVazia(pilha)) {
+    struct No_Arv *atual = desempilhar(&pilha);
+    printf("%d ", atual->dado);
+
+    if (atual->direita != NULL) {
+      empilhar(&pilha, atual->direita);
+    }
+    if (atual->esquerda != NULL) {
+      empilhar(&pilha, atual->esquerda);
+    }
+  }
+  printf("\n");
+}
+void percorrerPos_OrdemIterativo(struct No_Arv *raiz) {
+  if (raiz == NULL)
+    return;
+
+  struct Pilha *pilha1 = NULL, *pilha2 = NULL;
+  empilhar(&pilha1, raiz);
+
+  while (!pilhaVazia(pilha1)) {
+    struct No_Arv *atual = desempilhar(&pilha1);
+    empilhar(&pilha2, atual);
+
+    if (atual->esquerda != NULL) {
+      empilhar(&pilha1, atual->esquerda);
+    }
+    if (atual->direita != NULL) {
+      empilhar(&pilha1, atual->direita);
+    }
+  }
+
+  while (!pilhaVazia(pilha2)) {
+    struct No_Arv *atual = desempilhar(&pilha2);
+    printf("%d ", atual->dado);
+  }
+  printf("\n");
+}
+// 25. Escreva uma função não-recursiva que retorne o menor valor de uma  árvore
+// binária (não-ordenada)
+int encontrar_Menor_Valor_ABiterativa(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    printf("Arvore vazia.\n");
+    return -1;
+  }
+  int menorValor = raiz->dado;
+  struct No_Arv *fila[100];
+  int frente = 0, tras = 0;
+  fila[tras++] = raiz;
+
+  while (frente < tras) {
+    struct No_Arv *noAtual = fila[frente++];
+    if (noAtual->dado < menorValor) {
+      menorValor = noAtual->dado;
+    }
+    if (noAtual->esquerda != NULL) {
+      fila[tras++] = noAtual->esquerda;
+    }
+    if (noAtual->direita != NULL) {
+      fila[tras++] = noAtual->direita;
+    }
+  }
+  return menorValor;
+}
+// 26. Escreva uma funcao nao-recursiva que retorne o menor valor de uma  arvore
+// binaria de busca.
+int encontrar_Menor_Valor_ABBiterativo(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    printf("Arvore vazia.\n");
+    return -1;
+  }
+  struct No_Arv *atual = raiz;
+  while (atual->esquerda != NULL) {
+    atual = atual->esquerda;
+  }
+  return atual->dado;
+}
+// 27. Escreva uma funcao nao-recursiva que retorne o k-esimo menor valor de uma
+// arvore binaria de busca.
+
+int encontrar_Ordem_Menor_Valor(struct No_Arv *raiz, int k) {
+  if (raiz == NULL || k <= 0) {
+    printf("Árvore está vazia ou a ordem está invalida.\n");
+    return -1;
+  }
+  struct No_Arv *pilha[100];
+  int topo = -1;
+  struct No_Arv *atual = raiz;
+  int count = 0;
+
+  while (atual != NULL || topo != -1) {
+    while (atual != NULL) {
+      pilha[++topo] = atual;
+      atual = atual->esquerda;
+    }
+    atual = pilha[topo--];
+    count++;
+    if (count == k) {
+      return atual->dado;
+    }
+    atual = atual->direita;
+  }
+  printf("k é maior que o número de nos na ABB.\n");
+  return -1;
+}
+// 28. Escreva uma funcao que retorne o elemento menor ou igual (floor) que um
+// de referencia x em uma ABB.
+struct No_Arv *encontrar_Floor(struct No_Arv *raiz, int x) {
+  if (raiz == NULL) {
+    return NULL;
+  }
+  if (raiz->dado == x) {
+    return raiz;
+  } else if (x < raiz->dado) {
+    return encontrar_Floor(raiz->esquerda, x);
+  } else {
+    struct No_Arv *floorDireita = encontrar_Floor(raiz->direita, x);
+    if (floorDireita != NULL && floorDireita->dado <= x) {
+      return floorDireita;
+    }
+    return raiz;
+  }
+}
+// 29. Escreva uma funcao nao-recursiva que verifique a existencia de um valor X
+// na  arvore binaria.
+int encontrar(struct No_Arv *raiz, int x) {
+  while (raiz != NULL) {
+    if (raiz->dado == x) {
+      return 1;
+    } else if (x < raiz->dado) {
+      raiz = raiz->esquerda;
+    } else {
+      raiz = raiz->direita;
+    }
+  }
+  return 0;
+}
+// 30. Escreva uma funcao nao-recursiva que verifique a existencia de um valor
+// negativo na arvore binaria.
+
+void encontrar_Negativos(struct No_Arv *raiz) {
+  while (raiz != NULL) {
+    if (raiz->dado < 0) {
+      printf("Valor negativo encontrado: %d\n", raiz->dado);
+    }
+    raiz = raiz->esquerda;
+  }
+}
+// 31. Escreva uma funcao nao-recursiva que verifique se uma arvore binaria e
+// tambem de busca.
+int verificarABBiterativo(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 1;
+  }
+  struct No_Arv *pilha[100];
+  int topo = -1;
+  struct No_Arv *atual = raiz;
+  int anterior = -__INT_MAX__;
+
+  while (atual != NULL || topo != -1) {
+    while (atual != NULL) {
+      pilha[++topo] = atual;
+      atual = atual->esquerda;
+    }
+    atual = pilha[topo--];
+
+    if (atual->dado <= anterior) {
+      return 0;
+    }
+    anterior = atual->dado;
+    atual = atual->direita;
+  }
+  return 1;
+}
+// 33. Escreva e implemente um algoritmo nao recursivo para obter a altura de
+// uma ABB
+
+int altura(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 0;
+  }
+  struct No_Arv *fila[100];
+  int front = 0, back = 0;
+  int alt = 0;
+  fila[back++] = raiz;
+
+  while (front < back) {
+    int nivelSize = back - front;
+    alt++;
+
+    for (int i = 0; i < nivelSize; i++) {
+      struct No_Arv *noAtual = fila[front++];
+      if (noAtual->esquerda != NULL) {
+        fila[back++] = noAtual->esquerda;
+      }
+      if (noAtual->direita != NULL) {
+        fila[back++] = noAtual->direita;
+      }
+    }
+  }
+  return alt;
+}
+
+// 34. Escreva e implemente um algoritmo que dada uma ABB, construa uma outra
+// arvore ABB  aproximadamente completa. Para isso, obtenha todas as chaves e
+// valores e insira na nova arvore sempre o elemento mediano das chaves ainda
+// nao inseridas.
+
+struct No_Arv *arvCompleta(struct No_Arv *raiz, int valorAux) {
+  if (raiz == NULL) {
+    return NULL;
+  }
+  if (raiz->esquerda == NULL && raiz->direita == NULL) {
+    return raiz;
+  }
+
+  int valorAtual = raiz->dado;
+
+  if (raiz->esquerda == NULL) {
+    int novoValor = (valorAtual + valorAux) / 2;
+    if (novoValor > valorAtual) {
+      novoValor = valorAtual - 1;
+    }
+    raiz->esquerda = novoNo1(novoValor);
+  }
+
+  if (raiz->direita == NULL) {
+    int novoValor = (valorAtual + valorAux) / 2;
+    if (novoValor < valorAtual) {
+      novoValor = valorAtual + 1;
+    }
+    raiz->direita = novoNo1(novoValor);
+  }
+
+  valorAux = valorAtual;
+  arvCompleta(raiz->esquerda, valorAux);
+  arvCompleta(raiz->direita, valorAux);
+
+  return raiz;
+}
+
+// 35. Faca uma funcao que retorne a quantidade de folhas de uma arvore binaria
+// de busca
+
+int conta_nos_nao_folha(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 0;
+  } else {
+    if (raiz->esquerda != NULL || raiz->direita != NULL) {
+      int conta = conta_nos_nao_folha(raiz->esquerda);
+      int contad = conta_nos_nao_folha(raiz->direita);
+      return conta + contad + 1;
+    }
+  }
+  return 0;
+}
+
+// 36. Faca uma funcao que retorne a quantidade de nos de uma  arvore binaria de
+// busca que possuem apenas um filho.
+
+int contar_NosUmFilho(struct No_Arv *no) {
+  if (no == NULL) {
+    return 0;
+  }
+  if ((no->esquerda == NULL && no->direita != NULL) ||
+      (no->esquerda != NULL && no->direita == NULL)) {
+    return 1 + contar_NosUmFilho(no->esquerda) + contar_NosUmFilho(no->direita);
+  } else {
+    return contar_NosUmFilho(no->esquerda) + contar_NosUmFilho(no->direita);
+  }
+}
+
+// 37. Faca uma funcao que, dada uma arvore binaria de busca, retorne a
+// quantidade de nos que guardam numeros primos.
+
+int ePrimo(int num) {
+  if (num <= 1) {
+    return 0;
+  }
+  for (int i = 2; i * i <= num; i++) {
+    if (num % i == 0) {
+      return 0;
+    }
+  }
+  return 1;
+}
+int contar_NosPrimos(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 0;
+  }
+  int c = 0;
+  if (ePrimo(raiz->dado)) {
+    c++;
+  }
+  c += contar_NosPrimos(raiz->esquerda);
+  c += contar_NosPrimos(raiz->direita);
+  return c;
+}
+
+// 38. Fac¸a uma funcao que compare se duas  arvores binarias de busca sao
+// iguais
+int iguais(struct No_Arv *raiz1, struct No_Arv *raiz2) {
+  if (raiz1 == NULL && raiz2 == NULL) {
+    return 1;
+  }
+  if (raiz1 == NULL || raiz2 == NULL) {
+    return 0;
+  }
+  return (raiz1->dado == raiz2->dado) &&
+         iguais(raiz1->esquerda, raiz2->esquerda) &&
+         iguais(raiz1->direita, raiz2->direita);
+}
+
+// 39. Faca uma funcao que retorna a lista de caminhos da raiz ate cada folha
+
+struct No_Lista {
+  int dado;
+  struct No_Lista *prox;
+};
+void add_Caminho(struct No_Lista **caminho, int dado) {
+  struct No_Lista *novo = (struct No_Lista *)malloc(sizeof(struct No_Lista));
+  novo->dado = dado;
+  novo->prox = NULL;
+
+  if (*caminho == NULL) {
+    *caminho = novo;
+  } else {
+    struct No_Lista *temp = *caminho;
+    while (temp->prox != NULL) {
+      temp = temp->prox;
+    }
+    temp->prox = novo;
+  }
+}
+void listar_Caminhos(struct No_Arv *raiz, struct No_Lista *caminho) {
+  if (raiz == NULL) {
+    return;
+  }
+  add_Caminho(&caminho, raiz->dado);
+  if (raiz->esquerda == NULL && raiz->direita == NULL) {
+    printf("Caminho: ");
+    struct No_Lista *temp = caminho;
+    while (temp != NULL) {
+      printf("%d ", temp->dado);
+      temp = temp->prox;
+    }
+    printf("\n");
+  } else {
+
+    listar_Caminhos(raiz->esquerda, caminho);
+    listar_Caminhos(raiz->direita, caminho);
+  }
+
+  struct No_Lista *temp = caminho;
+  while (temp->prox->prox != NULL) {
+    temp = temp->prox;
+  }
+  free(temp->prox);
+  temp->prox = NULL;
+}
+/*40. Escreva uma funcao que faca o percurso em nıvel em uma arvore binaria. O
+percurso em nıvel (ou em largura) em uma arvore ´ e um percurso que visita, em
+ordem crescente, todos os nos de um nıvel antes de continuar a visita no nıvel
+seguinte. Uma das formas de implementar e utilizar uma fila (FIFO) para guardar
+quais ser ´ ao os proximos nodes a serem visitados.*/
+struct No_Fila {
+  struct No_Arv *no;
+  struct No_Fila *prox;
+};
+struct No_Fila *criarNoFila(struct No_Arv *no) {
+  struct No_Fila *novo = (struct No_Fila *)malloc(sizeof(struct No_Fila));
+  novo->no = no;
+  novo->prox = NULL;
+  return novo;
+}
+void enfileirar(struct No_Fila **frente, struct No_Fila **tras,
+                struct No_Arv *no) {
+  struct No_Fila *novo = criarNoFila(no);
+  if (*frente == NULL) {
+    *frente = *tras = novo;
+  } else {
+    (*tras)->prox = novo;
+    *tras = novo;
+  }
+}
+struct No_Arv *desenfileirar(struct No_Fila **frente, struct No_Fila **tras) {
+  if (*frente == NULL) {
+    return NULL;
+  }
+  struct No_Fila *temp = *frente;
+  struct No_Arv *no = temp->no;
+  *frente = (*frente)->prox;
+  free(temp);
+  if (*frente == NULL) {
+    *tras = NULL;
+  }
+  return no;
+}
+void percurso_Em_Nivel(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return;
+  }
+  struct No_Fila *frente = NULL;
+  struct No_Fila *tras = NULL;
+  enfileirar(&frente, &tras, raiz);
+  while (frente != NULL) {
+    struct No_Arv *atual = desenfileirar(&frente, &tras);
+    printf("%d ", atual->dado);
+    if (atual->esquerda != NULL) {
+      enfileirar(&frente, &tras, atual->esquerda);
+    }
+    if (atual->direita != NULL) {
+      enfileirar(&frente, &tras, atual->direita);
+    }
+  }
+}
+/* 46. Uma árvore binária de busca é estritamente binária se todos os nós da
+ * árvore tem 2 filhos. Implemente uma função que verifica se uma ˜ árvore
+ * binária de busca ´ e estritamente  binária.*/
+
+int EstritamenteBinaria(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 1;
+  }
+  if (raiz->esquerda == NULL && raiz->direita == NULL ||
+      raiz->esquerda != NULL && raiz->direita != NULL) {
+    return EstritamenteBinaria(raiz->esquerda) &&
+           EstritamenteBinaria(raiz->direita);
+  }
+  return 0;
+}
+
+// 47. Escreva um programa para copiar uma arvore binaria
+struct No_Arv *copArv(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return NULL;
+  }
+  struct No_Arv *novaRaiz = novoNo1(raiz->dado);
+  novaRaiz->esquerda = copArv(raiz->esquerda);
+  novaRaiz->direita = copArv(raiz->direita);
+  return novaRaiz;
+}
+void percurso_EmOrdem(struct No_Arv *no) {
+  if (no != NULL) {
+    percurso_EmOrdem(no->esquerda);
+    printf("%d ", no->dado);
+    percurso_EmOrdem(no->direita);
+  }
+}
+
+/*49. Modifique a implementac¸ao da arvore de busca binaria para que ela
+lide corretamente  com chaves duplicadas. Isto e, se uma chave ja est  a na
+arvore, a nova dever´substituir a  antiga.
+ */
+struct No_Arv *inserirNovo(struct No_Arv *raiz, int dado) {
+  if (raiz == NULL) {
+    return novoNo1(dado);
+  } else {
+    if (dado < raiz->dado) {
+      raiz->esquerda = inserir(raiz->esquerda, dado);
+    } else if (dado > raiz->dado) {
+      raiz->direita = inserir(raiz->direita, dado);
+    } else {
+      raiz->dado = dado;
+    }
+  }
+  return raiz;
+}
+
+// 58. Projete um algoritmo para determinar o menor numero em uma arvore AVL.
+int encontrar_Menor_Valor(struct No_Arv *raiz) {
+  while (raiz->esquerda != NULL) {
+    raiz = raiz->esquerda;
+  }
+  return raiz->dado;
+}
+
+// 59. Escreva uma func¸ao que receba um nıvel da arvore e imprima todos os nos
+// nesse nıvel.
+void imprimir_Nos_Nivel(struct No_Arv *raiz, int nivel) {
+  if (raiz == NULL) {
+    return;
+  }
+  if (nivel == 1) {
+    printf("%d ", raiz->dado);
+  } else if (nivel > 1) {
+    imprimir_Nos_Nivel(raiz->esquerda, nivel - 1);
+    imprimir_Nos_Nivel(raiz->direita, nivel - 1);
+  }
+}
+int encontrar_Altura(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 0;
+  } else {
+    int alt_esquerda = encontrar_Altura(raiz->esquerda);
+    int alt_direita = encontrar_Altura(raiz->direita);
+    if (alt_esquerda > alt_direita) {
+      return (alt_esquerda + 1);
+    } else {
+      return (alt_direita + 1);
+    }
+  }
+}
+// 60. Escreva a func¸ao que retorna o n ˜ umero de n ´ os que sao divisores da
+// soma de seus filhos. Leve em conta apenas os nos com dois filhos.
+
+int contar_Nos_Divisores(struct No_Arv *raiz, int *divisores, int *indice) {
+  if (raiz == NULL) {
+    return 0;
+  }
+  int c = 0;
+  if (raiz->esquerda != NULL && raiz->direita != NULL) {
+    int somarFilhos = raiz->esquerda->dado + raiz->direita->dado;
+    if (somarFilhos % raiz->dado == 0) {
+      divisores[*indice] = raiz->dado;
+      (*indice)++;
+      c = 1;
+    }
+  }
+  return c + contar_Nos_Divisores(raiz->esquerda, divisores, indice) +
+         contar_Nos_Divisores(raiz->direita, divisores, indice);
+}
+/* 61. Dada uma arvore binaria e dois nos dela, desenvolva um algoritmo para
+achar o ancestral comum mais baixo dos dois nos dados. O ancestral comum  e um n
+´ o que possua os outros dois nos em suas sub ´ arvores. O ancestral comum mais
+baixo  e o ancestral comum que tem a maior profundidade */
+struct No_Arv *encontrarLCA(struct No_Arv *raiz, int n1, int n2) {
+  if (raiz == NULL) {
+    return NULL;
+  }
+  if (raiz->dado == n1 || raiz->dado == n2) {
+    return raiz;
+  }
+  struct No_Arv *esqLCA = encontrarLCA(raiz->esquerda, n1, n2);
+  struct No_Arv *dirLCA = encontrarLCA(raiz->direita, n1, n2);
+  if (esqLCA != NULL && dirLCA != NULL) {
+    return raiz;
+  }
+  return (esqLCA != NULL) ? esqLCA : dirLCA;
+}
+/* 62. Em uma arvore binaria, fac¸a um algoritmo para alterar o valor de cada n
+´ o (exceto n ´ o´ folha) para a soma dos valores dos nos esquerda e direita.*/
+int altSoma_Dos_Filhos(struct No_Arv *raiz) {
+  if (raiz == NULL) {
+    return 0;
+  }
+  if (raiz->esquerda == NULL && raiz->direita == NULL) {
+    return raiz->dado;
+  }
+  int valorEsq = altSoma_Dos_Filhos(raiz->esquerda);
+  int valorDir = altSoma_Dos_Filhos(raiz->direita);
+  raiz->dado = valorEsq + valorDir;
+
+  return raiz->dado;
+}
+// 64. Faça um algoritmo que crie uma lista ligada com os nós de uma árvore
+// binária em um percurso em-ordem. .
+struct No_Lista *criarNoLista(int dado) {
+  struct No_Lista *no = (struct No_Lista *)malloc(sizeof(struct No_Lista));
+  no->dado = dado;
+  no->prox = NULL;
+  return no;
+}
+void addNoLista(struct No_Lista **head, int dado) {
+  struct No_Lista *novoNo = criarNoLista(dado);
+  novoNo->prox = *head;
+  *head = novoNo;
+}
+void percursoEmOrdemlista(struct No_Arv *raiz, struct No_Lista **lista) {
+  if (raiz != NULL) {
+    percurso_EmOrdem(raiz->esquerda);
+    addNoLista(lista, raiz->dado);
+    percurso_EmOrdem(raiz->direita);
+  }
+}
+void imprimirLista(struct No_Lista *head) {
+  struct No_Lista *atual = head;
+  while (atual != NULL) {
+    printf("%d -> ", atual->dado);
+    atual = atual->prox;
+  }
+  printf("NULL\n");
+}
+// 65. Faca um algoritmo para somar os nos presentes nos nıveis impares de uma
+// arvore binaria
+struct FilaNo {
+  struct No_Arv *no;
+  struct FilaNo *proximo;
+};
+struct FilaNo *nvFilaNo(struct No_Arv *no) {
+  struct FilaNo *filaNo = (struct FilaNo *)malloc(sizeof(struct FilaNo));
+  filaNo->no = no;
+  filaNo->proximo = NULL;
+  return filaNo;
+}
+void enfileirar1(struct FilaNo **frente, struct FilaNo **tras,
+                 struct No_Arv *no) {
+  struct FilaNo *filaNo = nvFilaNo(no);
+  if (*tras == NULL) {
+    *frente = *tras = filaNo;
+  } else {
+    (*tras)->proximo = filaNo;
+    *tras = filaNo;
+  }
+}
+struct No_Arv *desenfileirar1(struct FilaNo **frente, struct FilaNo **tras) {
+  if (*frente == NULL) {
+    return NULL;
+  }
+  struct FilaNo *temp = *frente;
+  struct No_Arv *no = temp->no;
+  *frente = (*frente)->proximo;
+  if (*frente == NULL) {
+    *tras = NULL;
+  }
+  free(temp);
+  return no;
+}
+int somaNosNiveisImpares(struct No_Arv *raiz) {
+  if (raiz == NULL)
+    return 0;
+  struct FilaNo *frente = NULL;
+  struct FilaNo *tras = NULL;
+  enfileirar1(&frente, &tras, raiz);
+  int nivel = 0;
+  int soma = 0;
+  while (frente != NULL) {
+    int tamanhoNivel = 0;
+    struct FilaNo *temp = frente;
+    while (temp != NULL) {
+      tamanhoNivel++;
+      temp = temp->proximo;
+    }
+    for (int i = 0; i < tamanhoNivel; i++) {
+      struct No_Arv *noAtual = desenfileirar1(&frente, &tras);
+      if (nivel % 2 != 0) {
+        soma += noAtual->dado;
+      }
+      if (noAtual->esquerda != NULL)
+        enfileirar1(&frente, &tras, noAtual->esquerda);
+      if (noAtual->direita != NULL)
+        enfileirar1(&frente, &tras, noAtual->direita);
+    }
+    nivel++;
+  }
+  return soma;
+}
+
+// 66. Implementar uma func¸ao nao-recursiva para calcular o tamanho de uma
+// arvore binaria
+int h_Arvore(struct No_Arv *raiz) {
+  if (raiz == NULL)
+    return 0;
+
+  struct FilaNo *frente = NULL;
+  struct FilaNo *tras = NULL;
+  enfileirar1(&frente, &tras, raiz);
+
+  int h = 0;
+
+  while (frente != NULL) {
+    struct No_Arv *noAtual = desenfileirar1(&frente, &tras);
+    h++;
+
+    if (noAtual->esquerda != NULL)
+      enfileirar1(&frente, &tras, noAtual->esquerda);
+    if (noAtual->direita != NULL)
+      enfileirar1(&frente, &tras, noAtual->direita);
+  }
+
+  return h;
+}
+// 67. Implementar uma funcao nao-recursiva para cada um dos percursos abaixo
+//(a) em-ordem
+void percorrer_EmOrdemIterativo(struct No_Arv *raiz) {
+  struct Pilha *pilha = NULL;
+  struct No_Arv *atual = raiz;
+
+  while (!pilhaVazia(pilha) || atual != NULL) {
+    while (atual != NULL) {
+      empilhar(&pilha, atual);
+      atual = atual->esquerda;
+    }
+    atual = desempilhar(&pilha);
+    printf("%d", atual->dado);
+    atual = atual->direita;
+  }
+}
+//(c) pre-ordem
+void percorrer_PreOrdemIterativo(struct No_Arv *raiz) {
+  if (raiz == NULL)
+    return;
+  struct Pilha *pilha = NULL;
+  empilhar(&pilha, raiz);
+
+  while (!pilhaVazia(pilha)) {
+    struct No_Arv *atual = desempilhar(&pilha);
+    printf("%d", atual->dado);
+
+    if (atual->direita != NULL) {
+      empilhar(&pilha, atual->direita);
+    }
+    if (atual->esquerda != NULL) {
+      empilhar(&pilha, atual->esquerda);
+    }
+  }
+  printf("\n");
+}
+//(b) pos-ordem
+void percorrer_PosOrdemIterativo(struct No_Arv *raiz) {
+  if (raiz == NULL)
+    return;
+  struct Pilha *pilha1 = NULL, *pilha2 = NULL;
+  empilhar(&pilha1, raiz);
+
+  while (!pilhaVazia(pilha1)) {
+    struct No_Arv *atual = desempilhar(&pilha1);
+    empilhar(&pilha2, atual);
+
+    if (atual->esquerda != NULL) {
+      empilhar(&pilha1, atual->esquerda);
+    }
+    if (atual->direita != NULL) {
+      empilhar(&pilha1, atual->direita);
+    }
+  }
+}
+int main() {
+  struct No_Arv *raiz = NULL;
+  struct No_Arv *raiz2 = NULL;
+
+  // Primeira árvore
+  raiz = inserir(raiz, 30);
+  raiz = inserir(raiz, 24);
+  raiz = inserir(raiz, 20);
+  raiz = inserir(raiz, 35);
+  raiz = inserir(raiz, 27);
+  raiz = inserir(raiz, 33);
+  raiz = inserir(raiz, 38);
+  raiz = inserir(raiz, 25);
+  raiz = inserir(raiz, 22);
+  raiz = inserir(raiz, 34);
+  raiz = inserir(raiz, 40);
+  raiz = inserir(raiz, 29);
+  raiz = inserir(raiz, 19);
+  raiz = inserir(raiz, 32);
+  raiz = inserir(raiz, 36);
+  // Segunda Arvore
+  raiz2 = inserir(raiz2, 50);
+  raiz2 = inserir(raiz2, 40);
+  raiz2 = inserir(raiz2, 30);
+  raiz2 = inserir(raiz2, 60);
+  raiz2 = inserir(raiz2, 45);
+  raiz2 = inserir(raiz2, 55);
+  raiz2 = inserir(raiz2, 70);
+  raiz2 = inserir(raiz2, 43);
+  raiz2 = inserir(raiz2, 35);
+  raiz2 = inserir(raiz2, 65);
+  raiz2 = inserir(raiz2, 75);
+  raiz2 = inserir(raiz2, 44);
+  raiz2 = inserir(raiz2, 32);
+
+  mostraArvore(raiz, 3);
+
+  printf("\nPercurso em ordem : ");
+  percorrerEmOrdem(raiz);
+  printf("\n");
+
+  printf("\nPercurso pre-ordem :");
+  percorrerPreOrdem(raiz);
+  printf("\n");
+
+  printf("\nPercurso pos-ordem : ");
+  percorrerPosOrdem(raiz);
+  printf("\n");
+
+  printf("\nPercurso em ordem Iterativo: ");
+  percorrerEm_OrdemIterativo(raiz);
+  printf("\n");
+
+  printf("\nPercurso pre-ordem Iterativo: ");
+  percorrerPre_OrdemIterativo(raiz);
+  printf("\n");
+
+  printf("\nPercurso pos-ordem Iterativo: ");
+  percorrerPos_OrdemIterativo(raiz);
+  printf("\n");
+
+  return 0;
+}
